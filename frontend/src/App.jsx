@@ -3,6 +3,7 @@ import './App.css';
 import QueryInput from './components/QueryInput';
 import ResponseDisplay from './components/ResponseDisplay';
 import Login from './components/Login';
+import FileUpload from './components/FileUpload';
 import { queryAPI } from './api';
 
 function App() {
@@ -62,6 +63,10 @@ function App() {
       </header>
 
       <main className="app-main">
+        <div className="upload-section">
+          <FileUpload token={token} />
+        </div>
+
         <div className="query-section">
           <QueryInput onSubmit={handleQuery} loading={loading} />
         </div>

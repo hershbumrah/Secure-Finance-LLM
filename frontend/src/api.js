@@ -83,4 +83,35 @@ export const checkHealth = async () => {
   }
 };
 
+/**
+ * Upload a PDF file
+ * @param {File} file - PDF file to upload
+ * @param {string} acl - Comma-separated list of user IDs for ACL
+ * @param {string} token - JWT authentication token
+ * @returns {Promise} Upload result
+ */
+export const uploadPDF = async (file, acl, token) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (acl) {
+      formData.append('acl', acl);
+    }
+
+    const response = await api.post('/upload', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.detail || 'Upload failed');
+    } else {
+      throw new Error('Unable to connect to server');
+    }
+  }
+};
+
 export default api;
