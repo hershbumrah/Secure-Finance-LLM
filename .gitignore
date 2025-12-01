@@ -143,6 +143,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.env*
+
 
 # Spyder project settings
 .spyderproject
@@ -205,3 +207,46 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Node.js / NPM
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn/
+.pnp.*
+package-lock.json
+yarn.lock
+
+# Build outputs
+frontend/build/
+frontend/dist/
+*.tsbuildinfo
+
+# Environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs/
+*.log
+
+# Vector DB data
+vector_db/qdrant_storage/
+qdrant_storage/
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

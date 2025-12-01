@@ -1,0 +1,75 @@
+.response-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.answer-section {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.answer-section h2 {
+  margin-top: 0;
+  color: #333;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.answer-content {
+  line-height: 1.6;
+  color: #444;
+  font-size: 16px;
+  white-space: pre-wrap;
+  margin-bottom: 16px;
+}
+
+.confidence-score {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.sources-section {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sources-section h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.sources-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.source-item {
+  padding: 12px;
+  border-left: 3px solid #007bff;
+  background: #f8f9fa;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.source-title {
+  font-weight: 500;
+  color: #333;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.source-id {
+  font-size: 12px;
+  color: #666;
+}
