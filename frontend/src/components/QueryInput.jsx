@@ -3,7 +3,7 @@ import './QueryInput.css';
 
 function QueryInput({ onSubmit, loading }) {
   const [query, setQuery] = useState('');
-  const [filters, setFilters] = useState({});
+  const [filters] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();

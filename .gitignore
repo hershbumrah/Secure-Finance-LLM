@@ -238,6 +238,10 @@ logs/
 vector_db/qdrant_storage/
 qdrant_storage/
 
+# Data files (PDFs contain sensitive info)
+data/pdfs/*.pdf
+data/*.pdf
+
 # Temporary files
 *.tmp
 *.temp

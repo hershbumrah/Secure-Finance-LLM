@@ -22,6 +22,10 @@ secure-finance-llm/
 ├── vector_db/              # Vector database setup
 │   └── docker-compose.yml  # Qdrant local deployment
 │
+├── data/                   # Data storage
+│   ├── pdfs/               # PDF documents for indexing
+│   └── acl_mapping.json    # Access control list configuration
+│
 ├── frontend/               # React frontend application
 │   ├── src/
 │   │   ├── App.jsx         # Main application component
