@@ -13,7 +13,9 @@ from pathlib import Path
 from auth import verify_token, check_permissions
 from retriever import retrieve_documents
 from guardrails import validate_response
-from logging import log_query
+from audit_logging import log_query
+
+from llm_client import test_llm
 
 # Configure upload directory
 UPLOAD_DIR = Path(__file__).parent.parent / "data" / "pdfs"
@@ -47,6 +49,10 @@ class QueryResponse(BaseModel):
 async def health_check():
     """Health check endpoint."""
     return {"status": "healthy"}
+
+@app.get("/health/llm")
+def llm_health():
+    return {"message": test_llm()}
 
 
 @app.post("/upload")
