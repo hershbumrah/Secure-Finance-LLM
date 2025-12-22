@@ -254,3 +254,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+#Backend env check
+backend/.env
+backend/.venv/
