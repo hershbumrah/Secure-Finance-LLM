@@ -239,8 +239,8 @@ def load_acl_mapping(acl_file: str) -> Dict[str, List[str]]:
 
 if __name__ == "__main__":
     # Example usage
-    pdf_dir = "./data/pdfs"
-    acl_file = "./data/acl_mapping.json"
+    pdf_dir = "../data/pdfs"
+    acl_file = "../data/acl_mapping.json"
     
     # Load ACL mapping
     acl_mapping = load_acl_mapping(acl_file) if os.path.exists(acl_file) else None

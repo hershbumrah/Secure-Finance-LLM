@@ -258,3 +258,23 @@ Thumbs.db
 #Backend env check
 backend/.env
 backend/.venv/
+frontend/.env
+frontend/.env.local
+
+# Sensitive data - NEVER commit these!
+.env
+*.env
+!.env.example
+data/pdfs/*.pdf
+logs/*.log
+backend/logs/
+*.db
+*.sqlite
+*.sqlite3
+
+# API keys and secrets
+secrets/
+credentials/
+*.key
+*.pem
+*.cert

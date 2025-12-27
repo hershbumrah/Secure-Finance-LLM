@@ -10,6 +10,12 @@ from qdrant_client.models import (
     CollectionStatus
 )
 import uuid
+import sys
+from pathlib import Path
+
+# Add parent directory to path for imports
+sys.path.append(str(Path(__file__).parent.parent / "backend"))
+from llm_client import embed_documents
 
 
 class QdrantUpserter:
@@ -20,7 +26,7 @@ class QdrantUpserter:
         host: str = "localhost",
         port: int = 6333,
         collection_name: str = "finance_documents",
-        vector_size: int = 1536  # OpenAI ada-002 dimension
+        vector_size: int = 384  # sentence-transformers/all-MiniLM-L6-v2 dimension
     ):
         """
         Initialize Qdrant client and collection.
@@ -140,34 +146,16 @@ class QdrantUpserter:
     
     def _generate_embeddings(self, texts: List[str]) -> List[List[float]]:
         """
-        Generate embeddings using embedding model.
+        Generate embeddings using Ollama embedding model.
         
         Args:
             texts: List of texts to embed
             
         Returns:
             List of embedding vectors
-            
-        Note:
-            Placeholder implementation. Replace with actual embedding model.
         """
-        # Option 1: OpenAI Embeddings
-        # import openai
-        # response = openai.Embedding.create(
-        #     input=texts,
-        #     model="text-embedding-ada-002"
-        # )
-        # return [item['embedding'] for item in response['data']]
-        
-        # Option 2: Sentence Transformers
-        # from sentence_transformers import SentenceTransformer
-        # model = SentenceTransformer('all-MiniLM-L6-v2')
-        # embeddings = model.encode(texts)
-        # return embeddings.tolist()
-        
-        # Placeholder: Return dummy vectors
-        print("Warning: Using dummy embeddings. Implement actual embedding generation.")
-        return [[0.0] * self.vector_size for _ in texts]
+        print(f"Generating embeddings for {len(texts)} texts...")
+        return embed_documents(texts)
     
     def get_collection_info(self) -> Dict:
         """
