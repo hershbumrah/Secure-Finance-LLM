@@ -6,23 +6,27 @@
 }
 
 .answer-section {
-  background: white;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 24px rgba(192, 192, 192, 0.2);
   margin-bottom: 20px;
+  border: 2px solid #4a4a4a;
 }
 
 .answer-section h2 {
   margin-top: 0;
-  color: #333;
+  background: linear-gradient(135deg, #e0e0e0 0%, #ffffff 50%, #c0c0c0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-size: 20px;
   margin-bottom: 16px;
 }
 
 .answer-content {
   line-height: 1.6;
-  color: #444;
+  color: #d0d0d0;
   font-size: 16px;
   white-space: pre-wrap;
   margin-bottom: 16px;
@@ -30,20 +34,24 @@
 
 .confidence-score {
   font-size: 14px;
-  color: #666;
+  color: #a0a0a0;
   font-weight: 500;
 }
 
 .sources-section {
-  background: white;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 24px rgba(192, 192, 192, 0.2);
+  border: 2px solid #4a4a4a;
 }
 
 .sources-section h3 {
   margin-top: 0;
-  color: #333;
+  background: linear-gradient(135deg, #e0e0e0 0%, #ffffff 50%, #c0c0c0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-size: 18px;
   margin-bottom: 12px;
 }
@@ -56,20 +64,21 @@
 
 .source-item {
   padding: 12px;
-  border-left: 3px solid #007bff;
-  background: #f8f9fa;
+  border-left: 3px solid #808080;
+  background: #2a2a2a;
   margin-bottom: 8px;
-  border-radius: 4px;
+  border-radius: 6px;
+  border: 1px solid #4a4a4a;
 }
 
 .source-title {
   font-weight: 500;
-  color: #333;
+  color: #e0e0e0;
   display: block;
   margin-bottom: 4px;
 }
 
 .source-id {
   font-size: 12px;
-  color: #666;
+  color: #a0a0a0;
 }

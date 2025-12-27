@@ -1,20 +1,27 @@
 import React, { useState } from 'react';
 import './Login.css';
+import { login } from '../api';
 
 function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    // For demo purposes - in production, call actual login API
     if (username && password) {
-      // Mock token generation (replace with actual API call)
-      const mockToken = 'demo-token-' + Math.random().toString(36).substr(2, 9);
-      onLogin(mockToken, username);
+      setLoading(true);
+      try {
+        const response = await login(username, password);
+        onLogin(response.token, response.user_id);
+      } catch (err) {
+        setError(err.message || 'Login failed');
+      } finally {
+        setLoading(false);
+      }
     } else {
       setError('Please enter both username and password');
     }
@@ -53,8 +60,8 @@ function Login({ onLogin }) {
 
           {error && <div className="error-message">{error}</div>}
 
-          <button type="submit" className="login-btn">
-            Login
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
       </div>

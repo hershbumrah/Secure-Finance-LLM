@@ -13,18 +13,16 @@ const api = axios.create({
 /**
  * Query the LLM API with user input
  * @param {string} query - User's question
- * @param {string} userId - User ID for ACL filtering
  * @param {string} token - JWT authentication token
  * @param {object} filters - Optional metadata filters
  * @returns {Promise} Response data
  */
-export const queryAPI = async (query, userId, token, filters = null) => {
+export const queryAPI = async (query, token, filters = null) => {
   try {
     const response = await api.post(
       '/query',
       {
         query,
-        user_id: userId,
         filters,
       },
       {

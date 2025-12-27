@@ -4,6 +4,7 @@ import QueryInput from './components/QueryInput';
 import ResponseDisplay from './components/ResponseDisplay';
 import Login from './components/Login';
 import FileUpload from './components/FileUpload';
+import AdminPanel from './components/AdminPanel';
 import { queryAPI } from './api';
 
 function App() {
@@ -13,11 +14,28 @@ function App() {
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('query'); // 'query' or 'admin'
+  const [availableDocuments, setAvailableDocuments] = useState([]);
 
-  const handleLogin = (authToken, user) => {
+  const handleLogin = async (authToken, user) => {
     setToken(authToken);
     setUserId(user);
     setIsAuthenticated(true);
+    
+    // Fetch available documents for filtering
+    try {
+      const response = await fetch('http://localhost:8000/admin/documents', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setAvailableDocuments(data.documents.map(doc => doc.filename));
+      }
+    } catch (err) {
+      console.error('Failed to fetch documents:', err);
+    }
   };
 
   const handleLogout = () => {
@@ -32,7 +50,7 @@ function App() {
     setError(null);
     
     try {
-      const result = await queryAPI(query, userId, token, filters);
+      const result = await queryAPI(query, token, filters);
       setResponse(result);
     } catch (err) {
       setError(err.message || 'An error occurred while processing your query');
@@ -62,20 +80,41 @@ function App() {
         </div>
       </header>
 
+      <nav className="app-nav">
+        <button 
+          className={`nav-btn ${activeTab === 'query' ? 'active' : ''}`}
+          onClick={() => setActiveTab('query')}
+        >
+          Query Documents
+        </button>
+        <button 
+          className={`nav-btn ${activeTab === 'admin' ? 'active' : ''}`}
+          onClick={() => setActiveTab('admin')}
+        >
+          Manage Access (Admin)
+        </button>
+      </nav>
+
       <main className="app-main">
-        <div className="upload-section">
-          <FileUpload token={token} />
-        </div>
+        {activeTab === 'query' ? (
+          <>
+            <div className="upload-section">
+              <FileUpload token={token} />
+            </div>
 
-        <div className="query-section">
-          <QueryInput onSubmit={handleQuery} loading={loading} />
-        </div>
+            <div className="query-section">
+              <QueryInput onSubmit={handleQuery} loading={loading} availableDocuments={availableDocuments} />
+            </div>
 
-        <div className="response-section">
-          {loading && <div className="loading">Processing your query...</div>}
-          {error && <div className="error-message">{error}</div>}
-          {response && <ResponseDisplay response={response} />}
-        </div>
+            <div className="response-section">
+              {loading && <div className="loading">Processing your query...</div>}
+              {error && <div className="error-message">{error}</div>}
+              {response && <ResponseDisplay response={response} />}
+            </div>
+          </>
+        ) : (
+          <AdminPanel token={token} />
+        )}
       </main>
     </div>
   );

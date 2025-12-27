@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import './QueryInput.css';
 
-function QueryInput({ onSubmit, loading }) {
+function QueryInput({ onSubmit, loading, availableDocuments = [] }) {
   const [query, setQuery] = useState('');
-  const [filters] = useState({});
+  const [selectedDocument, setSelectedDocument] = useState('all');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (query.trim() && !loading) {
+      const filters = selectedDocument !== 'all' ? { source_file: selectedDocument } : {};
       onSubmit(query, filters);
     }
   };
@@ -15,6 +16,24 @@ function QueryInput({ onSubmit, loading }) {
   return (
     <div className="query-input-container">
       <form onSubmit={handleSubmit}>
+        {availableDocuments.length > 0 && (
+          <div className="filter-group">
+            <label htmlFor="document-filter">Filter by document:</label>
+            <select
+              id="document-filter"
+              className="document-select"
+              value={selectedDocument}
+              onChange={(e) => setSelectedDocument(e.target.value)}
+              disabled={loading}
+            >
+              <option value="all">All Documents</option>
+              {availableDocuments.map((doc) => (
+                <option key={doc} value={doc}>{doc}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        
         <div className="input-group">
           <textarea
             className="query-textarea"

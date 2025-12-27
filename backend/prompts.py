@@ -4,32 +4,40 @@ LLM instruction templates and prompt engineering.
 from typing import List, Dict
 
 
-def build_qa_prompt(query: str, context_documents: List[Dict]) -> str:
+def build_qa_prompt(query: str, context_documents: List[Dict], num_unique_files: int = None) -> str:
     """
     Build a question-answering prompt with context.
     
     Args:
         query: User's question
-        context_documents: Relevant documents for context
+        context_documents: Relevant documents for context (these are text chunks)
+        num_unique_files: Number of unique source documents the chunks come from
         
     Returns:
         Formatted prompt for LLM
     """
     context = format_context(context_documents)
     
-    prompt = f"""You are a helpful financial assistant. Answer the user's question based ONLY on the provided context documents. If the answer cannot be found in the context, say so clearly.
-
+    # Add note about chunks vs documents
+    chunk_note = ""
+    if num_unique_files:
+        num_chunks = len(context_documents)
+        chunk_note = f"\n\nNOTE: You are seeing {num_chunks} text excerpt(s) from {num_unique_files} source document(s). Multiple excerpts may come from the same document file.\n"
+    
+    prompt = f"""You are a helpful financial assistant. Answer the user's question comprehensively and in detail using the information in the context documents below.
+{chunk_note}
 Context Documents:
 {context}
 
 User Question: {query}
 
-Instructions:
-- Only use information from the context documents above
-- If you're not certain, express your uncertainty
-- Do not make up information or use external knowledge
-- Cite the source document when possible
-- Keep responses clear and concise
+IMPORTANT Instructions:
+- Provide a thorough, detailed answer with specific information from the documents
+- Include relevant details, examples, and complete explanations
+- When referring to sources, understand that multiple excerpts may be from the same document file
+- Synthesize information naturally into a cohesive, informative response
+- Use complete sentences with proper context and explanations
+- Give comprehensive answers - don't be brief unless the question requires it
 
 Answer:"""
     

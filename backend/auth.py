@@ -5,9 +5,10 @@ from fastapi import HTTPException, Header
 from typing import Optional
 import jwt
 from datetime import datetime, timedelta
+import os
 
-# Configuration (move to environment variables in production)
-SECRET_KEY = "your-secret-key-here"
+# Load from environment variables (NEVER hardcode secrets!)
+SECRET_KEY = os.getenv("JWT_SECRET", "CHANGE-THIS-SECRET-KEY-IN-PRODUCTION")
 ALGORITHM = "HS256"
 
 
