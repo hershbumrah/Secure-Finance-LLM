@@ -3,14 +3,6 @@
 Secure Finance LLM is an institutional RAG platform for financial document intelligence under strict governance constraints.
 It is built for teams that need controlled access, auditable behavior, and high-signal answers from large report corpora.
 
-## Recruiter Snapshot
-
-- Built a full-stack financial AI platform: React frontend, FastAPI backend, Qdrant vector store, Ollama model runtime.
-- Implemented policy-aware retrieval with RBAC and document-level ACL enforcement.
-- Shipped a hybrid retrieval and reranking pipeline for better recall and ranking quality on long-form filings.
-- Added production-oriented controls: audit logging, guardrails, Dockerized deployment, admin access workflows.
-- Tuned ingestion and retrieval for large enterprise datasets (long annual reports, statements, internal research packs).
-
 ## Why This Matters
 
 Financial research systems fail when they are either inaccurate or uncontrolled.
