@@ -75,7 +75,7 @@ const AdminPanel = ({ token }) => {
         }
       );
 
-      setMessage(`✓ Updated access for ${response.data.updated_chunks} chunks`);
+      setMessage(`Access policy updated for ${response.data.updated_chunks} chunks`);
       
       // Refresh documents list
       await fetchDocuments();
@@ -88,7 +88,7 @@ const AdminPanel = ({ token }) => {
 
     } catch (error) {
       console.error('Error updating ACL:', error);
-      setMessage('✗ Error updating document access: ' + (error.response?.data?.detail || error.message));
+      setMessage('Error updating document access: ' + (error.response?.data?.detail || error.message));
     } finally {
       setLoading(false);
     }
@@ -115,7 +115,7 @@ const AdminPanel = ({ token }) => {
         }
       );
 
-      setMessage(`✓ Deleted ${response.data.deleted_chunks} chunks and file`);
+      setMessage(`Deleted ${response.data.deleted_chunks} chunks and source file`);
       
       // Clear selection
       setSelectedDoc(null);
@@ -126,7 +126,7 @@ const AdminPanel = ({ token }) => {
 
     } catch (error) {
       console.error('Error deleting document:', error);
-      setMessage('✗ Error deleting document: ' + (error.response?.data?.detail || error.message));
+      setMessage('Error deleting document: ' + (error.response?.data?.detail || error.message));
     } finally {
       setLoading(false);
     }
@@ -137,7 +137,7 @@ const AdminPanel = ({ token }) => {
       <div className="admin-header">
         <h2>Document Access Control</h2>
         <button className="refresh-btn" onClick={fetchDocuments} title="Refresh documents list">
-          ↻ Refresh
+          Refresh Data
         </button>
       </div>
       
@@ -214,7 +214,7 @@ const AdminPanel = ({ token }) => {
               </div>
 
               {message && (
-                <div className={`message ${message.startsWith('✓') ? 'success' : 'error'}`}>
+                <div className={`message ${message.startsWith('Error') ? 'error' : 'success'}`}>
                   {message}
                 </div>
               )}

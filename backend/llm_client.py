@@ -1,15 +1,18 @@
 import os
 from dotenv import load_dotenv
-from langchain_community.chat_models import ChatOllama
-from langchain_community.embeddings import OllamaEmbeddings
+try:
+    from langchain_ollama import ChatOllama, OllamaEmbeddings
+except ImportError:
+    from langchain_community.chat_models import ChatOllama
+    from langchain_community.embeddings import OllamaEmbeddings
 from langchain_core.messages import HumanMessage, SystemMessage
 from typing import List
 
 load_dotenv()
 
-LLM_MODEL = os.getenv("LLM_MODEL", "llama2")
+LLM_MODEL = os.getenv("LLM_MODEL", "llama3")
 LLM_BASE_URL = os.getenv("LLM_BASE_URL", "http://localhost:11434")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "all-minilm")
 
 def get_llm():
     """Get ChatOllama instance for text generation."""

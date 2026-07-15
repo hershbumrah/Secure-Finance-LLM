@@ -17,6 +17,9 @@ from audit_logging import log_query
 from llm_client import test_llm, generate_answer
 from indexer_service import index_pdf_file
 
+QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
+QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
+
 # Configure upload directory
 UPLOAD_DIR = Path(__file__).parent.parent / "data" / "pdfs"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -134,7 +137,7 @@ async def upload_pdf(
         
         # If file exists, delete old version from Qdrant first
         if file_path.exists():
-            client = QdrantClient(host="localhost", port=6333)
+            client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
             
             # Find and delete all points with this filename
             scroll_result = client.scroll(
@@ -168,7 +171,14 @@ async def upload_pdf(
         acl_list = [user_id.strip() for user_id in acl.split(",")] if acl else ["admin"]
         
         # Trigger automatic indexing in background
-        background_tasks.add_task(index_pdf_file, file_path, acl_list)
+        background_tasks.add_task(
+            index_pdf_file,
+            file_path,
+            acl_list,
+            "finance_documents",
+            QDRANT_HOST,
+            QDRANT_PORT
+        )
         
         return {
             "status": "success",
@@ -193,15 +203,21 @@ async def list_documents(user=Depends(verify_token)):
     try:
         from qdrant_client import QdrantClient
         
-        client = QdrantClient(host="localhost", port=6333)
+        client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
         
-        # Get all unique documents from Qdrant
-        scroll_result = client.scroll(
-            collection_name="finance_documents",
-            limit=10000,
-            with_payload=True,
-            with_vectors=False
-        )
+        # Get all unique documents from Qdrant.
+        # If collection is not created yet, return an empty list.
+        try:
+            scroll_result = client.scroll(
+                collection_name="finance_documents",
+                limit=10000,
+                with_payload=True,
+                with_vectors=False
+            )
+        except Exception as e:
+            if "doesn't exist" in str(e) or "Not found: Collection" in str(e):
+                return {"documents": []}
+            raise
         
         # Extract unique documents - deduplicate by BOTH document_id AND filename
         # This handles cases where old and new indexing methods coexist
@@ -266,7 +282,7 @@ async def delete_document(
         from qdrant_client.models import Filter, FieldCondition, MatchValue
         import os
         
-        client = QdrantClient(host="localhost", port=6333)
+        client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
         
         # Find all points with this filename
         scroll_result = client.scroll(
@@ -326,7 +342,7 @@ async def update_document_acl(
         from qdrant_client import QdrantClient
         from qdrant_client.models import Filter, FieldCondition, MatchValue, MatchAny
         
-        client = QdrantClient(host="localhost", port=6333)
+        client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
         
         # Try to find points by document_id OR filename
         # This handles both old and new indexing methods
