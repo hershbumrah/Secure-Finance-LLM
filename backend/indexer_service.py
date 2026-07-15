@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import List, Optional
 import hashlib
 import PyPDF2
+import os
 
 # Add parent directory to path
 sys.path.append(str(Path(__file__).parent))
@@ -13,6 +14,34 @@ sys.path.append(str(Path(__file__).parent))
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, Distance, VectorParams, Filter
 from llm_client import embed_text
+QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
+QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
+
+
+
+# Chunking defaults tuned for long financial reports.
+CHUNK_SIZE_WORDS = int(os.getenv("CHUNK_SIZE_WORDS", "180"))
+CHUNK_OVERLAP_WORDS = int(os.getenv("CHUNK_OVERLAP_WORDS", "40"))
+MIN_CHUNK_WORDS = int(os.getenv("MIN_CHUNK_WORDS", "20"))
+
+
+def chunk_words_with_overlap(words: List[str], chunk_size: int, overlap: int) -> List[str]:
+    """Create overlapping word chunks for better long-document recall."""
+    if not words:
+        return []
+
+    chunk_size = max(chunk_size, 50)
+    overlap = max(min(overlap, chunk_size - 1), 0)
+    step = chunk_size - overlap if chunk_size > overlap else chunk_size
+
+    chunks = []
+    i = 0
+    while i < len(words):
+        chunk_words = words[i:i + chunk_size]
+        if len(chunk_words) >= MIN_CHUNK_WORDS:
+            chunks.append(" ".join(chunk_words))
+        i += step
+    return chunks
 
 
 def generate_point_id(doc_id: str, page_num: int, chunk_idx: int) -> int:
@@ -26,8 +55,8 @@ def index_pdf_file(
     pdf_path: Path,
     acl_list: List[str],
     collection_name: str = "finance_documents",
-    qdrant_host: str = "localhost",
-    qdrant_port: int = 6333
+    qdrant_host: str = QDRANT_HOST,
+    qdrant_port: int = QDRANT_PORT
 ) -> dict:
     """
     Index a single PDF file into Qdrant with specified ACL.
@@ -72,13 +101,16 @@ def index_pdf_file(
                     if not text or len(text.strip()) < 50:
                         continue
                     
-                    # Create chunks (100 words each for better context)
+                    # Create configurable overlapping chunks for long reports
                     words = text.split()
-                    chunk_size_words = 100
-                    
-                    for i in range(0, len(words), chunk_size_words):
-                        chunk = " ".join(words[i:i + chunk_size_words])
-                        if not chunk.strip() or len(chunk) < 30:
+                    chunks = chunk_words_with_overlap(
+                        words,
+                        CHUNK_SIZE_WORDS,
+                        CHUNK_OVERLAP_WORDS
+                    )
+
+                    for chunk_idx, chunk in enumerate(chunks):
+                        if not chunk.strip():
                             continue
                         
                         try:
@@ -86,7 +118,7 @@ def index_pdf_file(
                             vector = embed_text(chunk)
                             
                             # Create point with ACL
-                            point_id = generate_point_id(doc_id, page_num, i // chunk_size_words)
+                            point_id = generate_point_id(doc_id, page_num, chunk_idx)
                             point = PointStruct(
                                 id=point_id,
                                 vector=vector,
@@ -94,7 +126,7 @@ def index_pdf_file(
                                     "content": chunk,
                                     "source_file": pdf_path.name,
                                     "page_number": page_num + 1,
-                                    "chunk_index": i // chunk_size_words,
+                                    "chunk_index": chunk_idx,
                                     "document_id": doc_id,
                                     "acl": acl_list  # Use provided ACL list
                                 }
@@ -110,7 +142,7 @@ def index_pdf_file(
                             
                         except Exception as e:
                             errors += 1
-                            print(f"Error on page {page_num+1}, chunk {i//chunk_size_words}: {e}")
+                            print(f"Error on page {page_num+1}, chunk {chunk_idx}: {e}")
                 
                 except Exception as e:
                     errors += 1
